@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CA Final Study Tracker – May 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f4f1eb;--bg2:#ede9e0;--card:#fff;--border:#ddd8cc;--text:#1a1614;--text2:#6b6560;--accent:#c84b31;--accent2:#e8703a;--accent3:#2d6a4f;--shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);--radius:14px;--nav-w:240px}
+[data-theme="dark"]{--bg:#0f0e0c;--bg2:#1a1917;--card:#1e1d1b;--border:#2e2c29;--text:#f0ece4;--text2:#8a8680;--shadow:0 2px 12px rgba(0,0,0,.3);--shadow-lg:0 8px 32px rgba(0,0,0,.4)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:var(--nav-w);background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;transition:transform .3s;z-index:100}
+.main{flex:1;overflow-y:auto}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page{display:none;padding:24px;max-width:1200px;margin:0 auto}.page.active{display:block}
+.sb-logo{padding:20px 18px 12px;border-bottom:1px solid var(--border)}
+.sb-logo h1{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--accent);line-height:1.2}
+.sb-logo p{font-size:11px;color:var(--text2);margin-top:2px}
+.sb-user{padding:14px 18px;border-bottom:1px solid var(--border)}
+.user-info{display:flex;align-items:center;gap:10px}
+.uavatar{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;flex-shrink:0}
+.uname{font-size:13px;font-weight:600}.urole{font-size:11px;color:var(--text2)}
+.sb-nav{flex:1;padding:12px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-left:3px solid transparent;transition:all .2s}
+.nav-item:hover{background:var(--bg2);color:var(--text)}
+.nav-item.active{background:var(--bg2);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item i{width:18px;text-align:center}
+.sb-bottom{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap}
+.icon-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s}
+.icon-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.logout-btn{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;background:#fee2e2;color:#c84b31;border:1px solid #fca5a5;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;width:100%;margin-top:4px}
+.logout-btn:hover{background:#fca5a5}
+[data-theme="dark"] .logout-btn{background:#2d1010;border-color:#7f1d1d;color:#fca5a5}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.hamburger{display:none;background:none;border:none;color:var(--text);font-size:20px;cursor:pointer}
+.topbar-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.streak-badge{background:linear-gradient(135deg,#ff6b35,#f7c59f);color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px}
+.grp-badge{background:linear-gradient(135deg,#1e4d8c,#4a9eff);color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px;display:none}
+.dots-wrap{position:relative}
+.dots-dd{position:absolute;right:0;top:40px;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);min-width:185px;z-index:200;overflow:hidden;display:none}
+.dots-dd.open{display:block}
+.dots-dd a{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--text);cursor:pointer;transition:background .2s;text-decoration:none}
+.dots-dd a:hover{background:var(--bg2)}.dots-dd a.danger{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.card-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.card-value{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--text);line-height:1}
+.card-sub{font-size:12px;color:var(--text2);margin-top:4px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.pw{margin-bottom:12px}.pl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.pt{height:7px;background:var(--bg2);border-radius:10px;overflow:hidden}
+.pf{height:100%;border-radius:10px;transition:width .6s ease}
+.btn{padding:9px 18px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:7px}
+.bp{background:var(--accent);color:#fff}.bp:hover{background:#b03d26}
+.bs{background:var(--bg2);color:var(--text);border:1px solid var(--border)}.bs:hover{background:var(--border)}
+.br{background:#c84b31;color:#fff}.bsm{padding:6px 12px;font-size:12px}.wfull{width:100%}
+.sbadge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bfr{background:#fde8e3;color:#c84b31}.bafm{background:#e3eaf8;color:#1e4d8c}.baudit{background:#e3f2ec;color:#2d6a4f}.bdt{background:#f2e3f4;color:#7b2d8b}.bitx{background:#fdf2e3;color:#b5860d}
+[data-theme="dark"] .bfr{background:#3d1a14}[data-theme="dark"] .bafm{background:#0d1f40}[data-theme="dark"] .baudit{background:#0d261c}[data-theme="dark"] .bdt{background:#2a0f30}[data-theme="dark"] .bitx{background:#3d2c06}
+.chi{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:9px;background:var(--bg2);margin-bottom:6px;flex-wrap:wrap}
+.ccb{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+.cname{flex:1;font-size:13px;font-weight:500;min-width:120px}
+.cst{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text2)}
+.snot{background:var(--bg2);color:var(--text2)}.sin{background:#fff8e3;color:#b5860d}.sdone{background:#e3f2ec;color:#2d6a4f}
+[data-theme="dark"] .sin{background:#3d2c06;color:#f0c060}[data-theme="dark"] .sdone{background:#0d261c;color:#60c090}
+.rg{display:flex;gap:5px}
+.rb{width:30px;height:22px;border-radius:5px;border:1.5px solid var(--border);background:var(--bg2);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--text2);display:flex;align-items:center;justify-content:center}
+.rb.r1.on{background:#fde8e3;border-color:#c84b31;color:#c84b31}.rb.r2.on{background:#fff8e3;border-color:#b5860d;color:#b5860d}.rb.r3.on{background:#e3f2ec;border-color:#2d6a4f;color:#2d6a4f}
+.sacc{margin-bottom:14px}
+.sh{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:background .2s;user-select:none}
+.sh:hover{background:var(--bg2)}.sh.open{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-color:transparent}
+.sbody{display:none;background:var(--card);border:1px solid var(--border);border-top:none;border-bottom-left-radius:var(--radius);border-bottom-right-radius:var(--radius);padding:14px 18px}
+.sbody.open{display:block}
+.stitle{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;flex:1}
+.spct{font-size:12px;font-weight:600;color:var(--text2)}.schev{font-size:12px;color:var(--text2);transition:transform .2s}.sh.open .schev{transform:rotate(180deg)}
+.ti{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--bg2);border-radius:9px;margin-bottom:7px}
+.ti.done .tt{text-decoration:line-through;color:var(--text2)}.tt{flex:1;font-size:13px}
+.tdel{background:none;border:none;color:var(--text2);cursor:pointer;padding:2px 6px;border-radius:5px;font-size:13px;transition:color .2s;flex-shrink:0}.tdel:hover{color:var(--accent)}
+.tdisp{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;text-align:center;color:var(--text);line-height:1;margin:16px 0}
+.tctrl{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.tli{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--bg2);border-radius:9px;margin-bottom:6px}
+.tli .tli-info{flex:1}.tli .tli-name{font-size:13px;font-weight:600}.tli .tli-meta{font-size:11px;color:var(--text2)}
+.tli .tli-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--accent)}
+.tli .tli-d{background:none;border:none;color:var(--text2);cursor:pointer;padding:3px 7px;border-radius:5px;font-size:13px}.tli .tli-d:hover{color:var(--accent)}
+.ai{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg2);border-radius:9px;margin-bottom:7px}
+.ath{width:44px;height:56px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)}
+.atpdf{width:44px;height:56px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0}
+.ainfo{flex:1}.aname{font-size:13px;font-weight:600}.ameta{font-size:11px;color:var(--text2);margin-top:2px}.aup{font-size:11px;color:var(--accent);font-weight:600;margin-top:2px}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-ov.open{display:flex}
+.modal{background:var(--card);border-radius:var(--radius);padding:24px;max-width:500px;width:100%;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal h3{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:16px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
+.fc{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.fc:focus{outline:none;border-color:var(--accent)}
+.mact{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--border);flex-wrap:wrap}
+.tab-btn{padding:8px 14px;font-size:13px;font-weight:600;color:var(--text2);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;font-family:'DM Sans',sans-serif}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-c{display:none}.tab-c.active{display:block}
+.ri{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg2);border-radius:9px;margin-bottom:7px}
+.ricon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.rinfo{flex:1}.rname{font-size:13px;font-weight:600}.rmeta{font-size:11px;color:var(--text2)}
+.gm{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg2);border-radius:10px;margin-bottom:10px}
+.mav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.minfo{flex:1}.mname{font-size:13px;font-weight:600}.mstat{font-size:11px;color:var(--text2)}.mpct{font-family:'Syne',sans-serif;font-size:18px;font-weight:800}
+.cc{position:relative;height:220px}
+.sec-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:18px}
+.sec-sub{font-size:13px;color:var(--text2);margin-bottom:20px;margin-top:-12px}
+.cdown{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:var(--radius);padding:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.ct{font-size:12px;font-weight:600;opacity:.85;text-transform:uppercase;letter-spacing:.08em}
+.cv{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;line-height:1}
+.cs{font-size:12px;opacity:.8;margin-top:2px}
+/* LOGIN */
+.lp{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:500;padding:20px;overflow-y:auto}
+.lw{width:100%;max-width:880px;margin:auto}
+.lh{text-align:center;margin-bottom:32px}
+.lh h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--accent)}
+.lh p{font-size:14px;color:var(--text2);margin-top:6px}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.lcard{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:28px;box-shadow:var(--shadow-lg);transition:border-color .2s}
+.lcard:hover{border-color:var(--accent)}
+.lcard-icon{font-size:32px;margin-bottom:12px}
+.lcard h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px}
+.lcard p{font-size:12px;color:var(--text2);margin-bottom:18px}
+.wa-btn{background:#25d366;color:#fff;border:none;border-radius:9px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;text-decoration:none;transition:background .2s}
+.wa-btn:hover{background:#1da851}
+.est{text-align:center;padding:40px 20px;color:var(--text2)}
+.est i{font-size:36px;margin-bottom:10px;opacity:.4;display:block}.est p{font-size:13px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+@media(max-width:768px){.sidebar{position:fixed;left:0;top:0;height:100%;transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.hamburger{display:block}.g4{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99;display:none}.overlay.open{display:block}.lgrid{grid-template-columns:1fr}}
+@media(max-width:480px){.g4{grid-template-columns:1fr}.page{padding:16px}.tdisp{font-size:36px}}
+</style>
+</head>
+<body>
+<!-- LOGIN -->
+<div class="lp" id="loginPage">
+  <div class="lw">
+    <div class="lh"><h1>CA Final 2026</h1><p>Study Tracker · May 2026 Attempt · Track. Revise. Ace.</p></div>
+    <div class="lgrid">
+      <div class="lcard">
+        <div class="lcard-icon">🎯</div>
+        <h2>Individual Login</h2>
+        <p>Track your personal study progress, chapters, timer, and resources.</p>
+        <div class="fg"><label>Your Name</label><input type="text" class="fc" id="indivName" placeholder="Enter your name" /></div>
+        <button class="btn bp wfull" onclick="doIndivLogin()"><i class="fas fa-rocket"></i> Start Studying</button>
+        <button class="wa-btn" onclick="shareWA()"><i class="fab fa-whatsapp" style="font-size:16px"></i> Share on WhatsApp</button>
+      </div>
+      <div class="lcard">
+        <div class="lcard-icon">👥</div>
+        <h2>Group Login</h2>
+        <p>Create a group or join one. See each other's real-time progress!</p>
+        <div class="tabs" style="margin-bottom:14px">
+          <button class="tab-btn active" onclick="switchLTab('grpC',this)">Create Group</button>
+          <button class="tab-btn" onclick="switchLTab('grpJ',this)">Join Group</button>
+        </div>
+        <div id="lt-grpC" class="tab-c active">
+          <div class="fg"><label>Group Name</label><input type="text" class="fc" id="grpCName" placeholder="e.g. CA Batch 2026" /></div>
+          <div class="fg"><label>Your Name (Admin)</label><input type="text" class="fc" id="grpCAdmin" placeholder="Your name" /></div>
+          <div id="pendingMembersUI" style="margin-bottom:8px"></div>
+          <div style="display:flex;gap:8px;margin-bottom:10px"><input type="text" class="fc" id="addMemberInp" placeholder="Add member name..." style="flex:1" /><button class="btn bs bsm" onclick="addPendingMember()"><i class="fas fa-plus"></i></button></div>
+          <button class="btn bp wfull" onclick="doCreateGroup()"><i class="fas fa-users"></i> Create Group</button>
+        </div>
+        <div id="lt-grpJ" class="tab-c">
+          <div class="fg"><label>Group Name</label><input type="text" class="fc" id="grpJGroup" placeholder="Enter exact group name" /></div>
+          <div class="fg"><label>Your Name</label><input type="text" class="fc" id="grpJName" placeholder="Enter your name" /></div>
+          <button class="btn bp wfull" onclick="doJoinGroup()"><i class="fas fa-sign-in-alt"></i> Join Group</button>
+        </div>
+        <button class="wa-btn" onclick="shareWA()"><i class="fab fa-whatsapp" style="font-size:16px"></i> Share on WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeSB()"></div>
+<div class="app" id="appRoot" style="display:none">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo"><h1>CA Final<br>Study Tracker</h1><p>May 2026 Attempt</p></div>
+    <div class="sb-user">
+      <div class="user-info">
+        <div class="uavatar" id="sbAvatar">?</div>
+        <div><div class="uname" id="sbName">–</div><div class="urole" id="sbRole">CA Final Student</div></div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><i class="fas fa-home"></i> Dashboard</div>
+      <div class="nav-item" onclick="showPage('timer',this)"><i class="fas fa-stopwatch"></i> Study Timer</div>
+      <div class="nav-item" onclick="showPage('planner',this)"><i class="fas fa-calendar-check"></i> Daily Planner</div>
+      <div class="nav-item" onclick="showPage('subjects',this)"><i class="fas fa-book-open"></i> Subjects</div>
+      <div class="nav-item" onclick="showPage('charts',this)"><i class="fas fa-chart-bar"></i> Analytics</div>
+      <div class="nav-item" onclick="showPage('resources',this)"><i class="fas fa-folder-open"></i> Resources</div>
+      <div class="nav-item" onclick="showPage('videos',this)"><i class="fas fa-video"></i> Video Lectures</div>
+      <div class="nav-item" onclick="showPage('answers',this)"><i class="fas fa-file-alt"></i> Answer Sheets</div>
+      <div class="nav-item grponly" id="navGrp" style="display:none" onclick="showPage('group',this)"><i class="fas fa-users"></i> Group Progress</div>
+    </nav>
+    <div class="sb-bottom">
+      <div class="icon-btn" onclick="toggleTheme()" title="Theme"><i class="fas fa-moon" id="themeIcon"></i></div>
+      <div class="icon-btn" onclick="shareWA()" title="WhatsApp"><i class="fab fa-whatsapp"></i></div>
+      <div class="icon-btn dots-wrap" style="position:relative">
+        <div onclick="toggleDD('ddSB')"><i class="fas fa-ellipsis-v"></i></div>
+        <div class="dots-dd" id="ddSB">
+          <a onclick="toggleTheme();closeDD()"><i class="fas fa-moon"></i> Toggle Theme</a>
+          <a onclick="shareWA();closeDD()"><i class="fab fa-whatsapp"></i> Share on WhatsApp</a>
+          <a onclick="exportData()"><i class="fas fa-download"></i> Export Data</a>
+          <a class="danger" onclick="confirmReset()"><i class="fas fa-trash-alt"></i> Reset All Data</a>
+        </div>
+      </div>
+      <button class="logout-btn wfull" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Log Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSB()"><i class="fas fa-bars"></i></button>
+        <span class="topbar-title" id="topTitle">Dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <div class="streak-badge"><i class="fas fa-fire"></i> <span id="streakNum">0</span>d</div>
+        <div class="grp-badge grponly" id="grpBadge"><i class="fas fa-users"></i> <span id="grpBadgeN"></span></div>
+        <div class="dots-wrap">
+          <div class="icon-btn" onclick="toggleDD('ddTop')"><i class="fas fa-ellipsis-v"></i></div>
+          <div class="dots-dd" id="ddTop">
+            <a onclick="toggleTheme();closeDD()"><i class="fas fa-moon"></i> Toggle Theme</a>
+            <a onclick="shareWA();closeDD()"><i class="fab fa-whatsapp"></i> Share on WhatsApp</a>
+            <a onclick="exportData()"><i class="fas fa-download"></i> Export Data</a>
+            <a class="danger" onclick="confirmReset()"><i class="fas fa-trash-alt"></i> Reset All Data</a>
+            <a class="danger" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="cdown">
+        <div><div class="ct">Days Until CA Final Exam</div><div class="cv" id="daysLeft">–</div><div class="cs">May 2026 Attempt</div></div>
+        <div style="text-align:right"><div class="ct">Overall Progress</div><div class="cv" id="overallPct">0%</div><div class="cs">Syllabus completed</div></div>
+      </div>
+      <div class="g4">
+        <div class="card"><div class="card-title">Today's Hours</div><div class="card-value" id="dToday">0.0</div><div class="card-sub">hours today</div></div>
+        <div class="card"><div class="card-title">This Week</div><div class="card-value" id="dWeek">0.0</div><div class="card-sub">hours this week</div></div>
+        <div class="card"><div class="card-title">Chapters Done</div><div class="card-value" id="dChDone">0</div><div class="card-sub">of <span id="dChTotal">0</span> total</div></div>
+        <div class="card"><div class="card-title">Study Streak</div><div class="card-value" id="dStreak">0</div><div class="card-sub">consecutive days</div></div>
+      </div>
+      <div class="g2">
+        <div class="card"><div class="card-title" style="margin-bottom:14px">Subject Progress</div><div id="subjBars"></div></div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px">Quick Log Hours</div>
+          <div class="fg"><label>Subject</label><select class="fc" id="qSubj"></select></div>
+          <div class="fg"><label>Hours Studied</label><input type="number" class="fc" id="qHrs" min="0.1" max="24" step="0.5" placeholder="e.g. 2.5" /></div>
+          <button class="btn bp wfull" onclick="logHours()"><i class="fas fa-plus"></i> Log Hours</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMER -->
+    <div class="page" id="page-timer">
+      <div class="sec-title">Study Timer</div>
+      <div class="g2">
+        <div class="card" style="text-align:center">
+          <div class="fg"><label>Subject</label><select class="fc" id="tmSubj" onchange="updateTmCh()"></select></div>
+          <div class="fg"><label>Chapter / Topic</label><select class="fc" id="tmCh"></select></div>
+          <div class="tdisp" id="tDisp">00:00:00</div>
+          <div class="tctrl">
+            <button class="btn bp" id="tmStart" onclick="tmBegin()"><i class="fas fa-play"></i> Start</button>
+            <button class="btn bs" id="tmPause" onclick="tmPause()" style="display:none"><i class="fas fa-pause"></i> Pause</button>
+            <button class="btn bs" id="tmResume" onclick="tmResume()" style="display:none"><i class="fas fa-play"></i> Resume</button>
+            <button class="btn br" id="tmStop" onclick="tmStop()" style="display:none"><i class="fas fa-stop"></i> Stop &amp; Log</button>
+          </div>
+          <div id="tmActiveBox" style="display:none;margin-top:12px;padding:10px;background:var(--bg2);border-radius:9px;text-align:left">
+            <div style="font-size:12px;color:var(--text2)">Currently studying:</div>
+            <div id="tmActiveInfo" style="font-size:13px;font-weight:600;margin-top:3px"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="card-title" style="margin-bottom:0">Timer Log</div>
+            <span style="font-size:12px;color:var(--text2)" id="tmTotalLbl">Total: 0.0h today</span>
+          </div>
+          <div id="tmLog"><div class="est"><i class="fas fa-clock"></i><p>No sessions logged yet.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANNER -->
+    <div class="page" id="page-planner">
+      <div class="sec-title">Daily Planner</div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px">Add Task</div>
+          <div class="fg"><label>Task Description</label><input type="text" class="fc" id="taskDesc" placeholder="e.g. Read Chapter 3 of FR" /></div>
+          <div class="fg"><label>Subject</label><select class="fc" id="taskSubj" onchange="updChSel('taskSubj','taskCh')"></select></div>
+          <div class="fg"><label>Chapter</label><select class="fc" id="taskCh"></select></div>
+          <button class="btn bp wfull" onclick="addTask()"><i class="fas fa-plus"></i> Add Task</button>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div class="card-title" style="margin-bottom:0">Today's Tasks</div>
+            <span style="font-size:12px;color:var(--text2)" id="taskLbl">0 / 0 done</span>
+          </div>
+          <div id="taskList"><div class="est"><i class="fas fa-clipboard-list"></i><p>No tasks yet.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBJECTS -->
+    <div class="page" id="page-subjects">
+      <div class="sec-title">Subject &amp; Chapter Tracker</div>
+      <p class="sec-sub">Track status and revision rounds per chapter.</p>
+      <div id="subjAcc"></div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="page" id="page-charts">
+      <div class="sec-title">Analytics</div>
+      <div class="g2">
+        <div class="card"><div class="card-title" style="margin-bottom:12px">Weekly Study Hours</div><div class="cc"><canvas id="wkChart"></canvas></div></div>
+        <div class="card"><div class="card-title" style="margin-bottom:12px">Subject-wise Progress</div><div class="cc"><canvas id="subjChart"></canvas></div></div>
+      </div>
+      <div class="card"><div class="card-title" style="margin-bottom:12px">Chapter Completion by Subject</div><div class="cc" style="height:260px"><canvas id="barChart"></canvas></div></div>
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="page" id="page-resources">
+      <div class="sec-title">Resources</div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="swTab('res','rAll',this)">All Resources</button>
+        <button class="tab-btn" onclick="swTab('res','rAdd',this)">+ Add Resource</button>
+      </div>
+      <div class="tab-c active" id="res-rAll">
+        <div style="margin-bottom:12px"><select class="fc" style="max-width:220px" id="rFiltSubj" onchange="renderRes()"><option value="">All Subjects</option></select></div>
+        <div id="resList"><div class="est"><i class="fas fa-folder-open"></i><p>No resources yet.</p></div></div>
+      </div>
+      <div class="tab-c" id="res-rAdd">
+        <div class="card" style="max-width:500px">
+          <div class="fg"><label>Type</label><select class="fc" id="resType" onchange="togResF()"><option value="pdf">PDF File</option><option value="image">Image</option><option value="link">Website Link</option></select></div>
+          <div class="fg"><label>Title</label><input type="text" class="fc" id="resTitle" placeholder="Resource title" /></div>
+          <div class="fg" id="resFileW"><label>Upload File</label><input type="file" class="fc" id="resFile" accept=".pdf,.jpg,.jpeg,.png" /></div>
+          <div class="fg" id="resLinkW" style="display:none"><label>URL</label><input type="text" class="fc" id="resLink" placeholder="https://..." /></div>
+          <div class="fg"><label>Subject</label><select class="fc" id="resSubj"></select></div>
+          <button class="btn bp wfull" onclick="addRes()"><i class="fas fa-plus"></i> Add Resource</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEOS -->
+    <div class="page" id="page-videos">
+      <div class="sec-title">Video Lectures</div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="swTab('vid','vAll',this)">All Videos</button>
+        <button class="tab-btn" onclick="swTab('vid','vAdd',this)">+ Add Video</button>
+      </div>
+      <div class="tab-c active" id="vid-vAll">
+        <div style="margin-bottom:12px"><select class="fc" style="max-width:220px" id="vFiltSubj" onchange="renderVids()"><option value="">All Subjects</option></select></div>
+        <div id="vidList"><div class="est"><i class="fas fa-video"></i><p>No videos yet.</p></div></div>
+      </div>
+      <div class="tab-c" id="vid-vAdd">
+        <div class="card" style="max-width:500px">
+          <div class="fg"><label>YouTube URL</label><input type="text" class="fc" id="vidUrl" placeholder="https://www.youtube.com/watch?v=..." /></div>
+          <div class="fg"><label>Title</label><input type="text" class="fc" id="vidTitle" placeholder="Video title" /></div>
+          <div class="fg"><label>Subject</label><select class="fc" id="vidSubj"></select></div>
+          <button class="btn bp wfull" onclick="addVid()"><i class="fas fa-plus"></i> Add Video</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANSWER SHEETS -->
+    <div class="page" id="page-answers">
+      <div class="sec-title">Answer Sheets</div>
+      <p class="sec-sub">Upload your answer sheets for group review to improve writing skills.</p>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="swTab('ans','aAll',this)">All Sheets</button>
+        <button class="tab-btn" onclick="swTab('ans','aAdd',this)">+ Upload Sheet</button>
+      </div>
+      <div class="tab-c active" id="ans-aAll">
+        <div style="margin-bottom:12px"><select class="fc" style="max-width:220px" id="aFiltSubj" onchange="renderAns()"><option value="">All Subjects</option></select></div>
+        <div id="ansList"><div class="est"><i class="fas fa-file-alt"></i><p>No answer sheets yet.</p></div></div>
+      </div>
+      <div class="tab-c" id="ans-aAdd">
+        <div class="card" style="max-width:500px">
+          <div class="fg"><label>Title / Description</label><input type="text" class="fc" id="ansTitle" placeholder="e.g. FR Chapter 3 Practice" /></div>
+          <div class="fg"><label>Subject</label><select class="fc" id="ansSubj"></select></div>
+          <div class="fg"><label>Upload (PDF or Image)</label><input type="file" class="fc" id="ansFile" accept=".pdf,.jpg,.jpeg,.png" /></div>
+          <button class="btn bp wfull" onclick="addAns()"><i class="fas fa-upload"></i> Upload Answer Sheet</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP PROGRESS -->
+    <div class="page" id="page-group">
+      <div class="sec-title">Group Progress</div>
+      <div id="grpNameTag" style="display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#1e4d8c,#4a9eff);color:#fff;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:18px"><i class="fas fa-users"></i><span id="grpNameLbl"></span></div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="swTab('grp','gProg',this)">Member Progress</button>
+        <button class="tab-btn" onclick="swTab('grp','gRes',this)">Shared Resources</button>
+        <button class="tab-btn" onclick="swTab('grp','gVid',this)">Shared Videos</button>
+        <button class="tab-btn" onclick="swTab('grp','gAns',this)">Answer Sheets</button>
+      </div>
+      <div class="tab-c active" id="grp-gProg"><div id="grpMemList"><div class="est"><i class="fas fa-users"></i><p>Loading...</p></div></div></div>
+      <div class="tab-c" id="grp-gRes">
+        <div class="card" style="max-width:500px;margin-bottom:16px">
+          <div class="card-title" style="margin-bottom:12px">Share Resource</div>
+          <div class="fg"><label>Type</label><select class="fc" id="gResType" onchange="togGResF()"><option value="pdf">PDF File</option><option value="image">Image</option><option value="link">Website Link</option></select></div>
+          <div class="fg"><label>Title</label><input type="text" class="fc" id="gResTitle" /></div>
+          <div class="fg" id="gResFileW"><label>Upload File</label><input type="file" class="fc" id="gResFile" accept=".pdf,.jpg,.jpeg,.png" /></div>
+          <div class="fg" id="gResLinkW" style="display:none"><label>URL</label><input type="text" class="fc" id="gResLink" placeholder="https://..." /></div>
+          <div class="fg"><label>Subject</label><select class="fc" id="gResSubj"></select></div>
+          <button class="btn bp wfull" onclick="addGRes()"><i class="fas fa-plus"></i> Share</button>
+        </div>
+        <div id="gResList"><div class="est"><i class="fas fa-folder-open"></i><p>No shared resources yet.</p></div></div>
+      </div>
+      <div class="tab-c" id="grp-gVid">
+        <div class="card" style="max-width:500px;margin-bottom:16px">
+          <div class="card-title" style="margin-bottom:12px">Share Video</div>
+          <div class="fg"><label>YouTube URL</label><input type="text" class="fc" id="gVidUrl" placeholder="https://www.youtube.com/watch?v=..." /></div>
+          <div class="fg"><label>Title</label><input type="text" class="fc" id="gVidTitle" /></div>
+          <div class="fg"><label>Subject</label><select class="fc" id="gVidSubj"></select></div>
+          <button class="btn bp wfull" onclick="addGVid()"><i class="fas fa-plus"></i> Share Video</button>
+        </div>
+        <div id="gVidList"><div class="est"><i class="fas fa-video"></i><p>No shared videos yet.</p></div></div>
+      </div>
+      <div class="tab-c" id="grp-gAns">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Answer sheets shared by all group members:</p>
+        <div id="gAnsList"><div class="est"><i class="fas fa-file-alt"></i><p>No answer sheets shared yet.</p></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RESET MODAL -->
+<div class="modal-ov" id="resetMod">
+  <div class="modal">
+    <h3>⚠️ Reset All Data</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px">This will permanently delete ALL your progress, tasks, timer logs, and uploads. Cannot be undone.</p>
+    <div class="mact">
+      <button class="btn bs" onclick="closeMod('resetMod')">Cancel</button>
+      <button class="btn bp" onclick="doReset()">Yes, Reset Everything</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUBJ={
+  fr:{name:"Financial Reporting",short:"FR",color:"#c84b31",bc:"bfr",chapters:["Introduction to Indian Accounting Standards","Conceptual Framework for Financial Reporting under Ind AS","Ind AS on Presentation of Items in Financial Statements","Ind AS on Measurement based on Accounting Policies","Ind AS 115 Revenue from Contracts with Customers","Ind AS on Assets of Financial Statements","Other Indian Accounting Standards","Ind AS on Liabilities of Financial Statements","Ind AS on Items Impacting Financial Statements","Ind AS on Disclosures in Financial Statements","Accounting and Reporting of Financial Instruments","Ind AS 103 Business Combinations","Consolidated and Separate Financial Statements","Ind AS 101 First Time Adoption of Ind AS","Analysis of Financial Statements","Professional and Ethical Duty of Chartered Accountant","Accounting and Technology"]},
+  afm:{name:"Advanced Financial Management",short:"AFM",color:"#1e4d8c",bc:"bafm",chapters:["Financial Policy and Corporate Strategy","Risk Management","Advanced Capital Budgeting Decisions","Security Analysis","Security Valuation","Portfolio Management","Securitization","Mutual Funds","Derivatives Analysis and Valuation","Foreign Exchange Exposure and Risk Management","International Financial Management","Interest Rate Risk Management","Business Valuation","Mergers Acquisitions and Corporate Restructuring","Startup Finance"]},
+  audit:{name:"Advanced Auditing & Professional Ethics",short:"Audit",color:"#2d6a4f",bc:"baudit",chapters:["Quality Control","General Auditing Principles and Auditor Responsibilities","Audit Planning Strategy and Execution","Materiality Risk Assessment and Internal Control","Audit Evidence","Completion and Review","Reporting","Specialised Areas","Audit Related Services","Review of Financial Information","Prospective Financial Information and Other Assurance Services","Digital Auditing and Assurance","Group Audits","Special Features of Audit of Banks and NBFCs","Overview of Audit of Public Sector Undertakings","Internal Audit","Due Diligence Investigation and Forensic Audit","ESG and Sustainable Development Assurance","Professional Ethics and Liabilities of Auditors"]},
+  dt:{name:"Direct Tax Laws & International Taxation",short:"DT",color:"#7b2d8b",bc:"bdt",chapters:["Basic Concepts","Incomes not forming part of Total Income","Profits and Gains of Business or Profession","Capital Gains","Income from Other Sources","Income of Other Persons included in Assessee Income","Aggregation of Income Set off and Carry Forward of Losses","Deductions from Gross Total Income","Assessment of Various Entities","Assessment of Trusts Political Parties and Other Special Entities","Tax Planning Tax Avoidance and Tax Evasion","Taxation of Digital Transactions","Deduction Collection and Recovery of Tax","Income Tax Authorities","Assessment Procedure","Appeals and Revision","Dispute Resolution","Miscellaneous Provisions","Provisions to Counteract Unethical Tax Practices","Tax Audit and Ethical Compliances","Non Resident Taxation","Double Taxation Relief","Advance Rulings","Transfer Pricing","Fundamentals of BEPS","Application and Interpretation of Tax Treaties","Overview of Model Tax Conventions","Latest Developments in International Taxation"]},
+  itx:{name:"Indirect Tax Laws",short:"IDT",color:"#b5860d",bc:"bitx",chapters:["Supply under GST","Charge of GST","Place of Supply","Exemptions from GST","Time of Supply","Value of Supply","Input Tax Credit","Registration","Tax Invoice Credit and Debit Notes","Accounts and Records E-way Bill","Payment of Tax","Electronic Commerce Transactions","Returns","Import and Export under GST","Refunds","Job Work","Assessment and Audit","Inspection Search Seizure and Arrest","Demand and Recovery","Liability to Pay in Certain Cases","Offences and Penalties","Appeals and Revisions","Advance Ruling","Miscellaneous Provisions (GST)","Levy and Exemption from Customs Duty","Types of Duty","Classification of Imported and Exported Goods","Valuation under Customs Act","Importation and Exportation of Goods","Warehousing","Refund (Customs)","Foreign Trade Policy"]}
+};
+const MCOLS=['#c84b31','#1e4d8c','#2d6a4f','#7b2d8b','#b5860d','#e8703a','#0a7abf','#c44569'];
+
+let S={user:null,mode:'individual',groupName:null,chapters:{},tasks:[],studyLog:{},streak:0,lastStudyDate:null,timerLog:[],resources:[],videos:[],answerSheets:[],theme:'light'};
+let pendM=[];
+let wkC,sjC,brC;
+let tmIv=null,tmSec=0,tmRun=false,tmPaused=false,tmSubj='',tmCh=-1;
+
+// STORAGE
+const uKey=()=>'caf_u_'+S.user;
+const gKey=n=>'caf_g_'+(n||S.groupName||'');
+function saveU(){localStorage.setItem(uKey(),JSON.stringify(S));}
+function loadU(n){const r=localStorage.getItem('caf_u_'+n);if(r){try{const d=JSON.parse(r);S={...S,...d};}catch(e){}}}
+function saveG(g){localStorage.setItem(gKey(g.groupName||S.groupName),JSON.stringify(g));}
+function loadG(n){const r=localStorage.getItem(gKey(n));if(r){try{return JSON.parse(r);}catch(e){}}return null;}
+function getG(n){return loadG(n)||{groupName:n,members:[],resources:[],videos:[],answerSheets:[]};}
+
+// LOGIN
+function switchLTab(id,el){
+  document.querySelectorAll('.lcard .tab-c').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.lcard .tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('lt-'+id).classList.add('active');el.classList.add('active');
+}
+function addPendingMember(){
+  const v=document.getElementById('addMemberInp').value.trim();
+  if(!v)return;if(pendM.includes(v)){alert('Already added');return;}
+  pendM.push(v);document.getElementById('addMemberInp').value='';renderPendM();
+}
+function renderPendM(){
+  const w=document.getElementById('pendingMembersUI');
+  if(!pendM.length){w.innerHTML='';return;}
+  w.innerHTML='<div style="font-size:12px;color:var(--text2);font-weight:600;margin-bottom:6px">Members:</div>'+
+    pendM.map((m,i)=>`<span style="display:inline-flex;align-items:center;gap:5px;background:var(--bg2);padding:3px 10px;border-radius:20px;font-size:12px;margin:2px">${m}<span onclick="pendM.splice(${i},1);renderPendM()" style="cursor:pointer;color:var(--accent)">×</span></span>`).join('');
+}
+function doIndivLogin(){
+  const n=document.getElementById('indivName').value.trim();
+  if(!n){alert('Enter your name!');return;}
+  S={user:n,mode:'individual',groupName:null,chapters:{},tasks:[],studyLog:{},streak:0,lastStudyDate:null,timerLog:[],resources:[],videos:[],answerSheets:[],theme:'light'};
+  loadU(n);S.user=n;S.mode='individual';S.groupName=null;saveU();launch();
+}
+function doCreateGroup(){
+  const gn=document.getElementById('grpCName').value.trim();
+  const an=document.getElementById('grpCAdmin').value.trim();
+  if(!gn||!an){alert('Enter group name and your name');return;}
+  const all=[an,...pendM];
+  let g=loadG(gn)||{groupName:gn,members:[],resources:[],videos:[],answerSheets:[]};
+  all.forEach(m=>{if(!g.members.includes(m))g.members.push(m);});
+  saveG(g);
+  S={user:an,mode:'group',groupName:gn,chapters:{},tasks:[],studyLog:{},streak:0,lastStudyDate:null,timerLog:[],resources:[],videos:[],answerSheets:[],theme:'light'};
+  loadU(an);S.user=an;S.mode='group';S.groupName=gn;saveU();pendM=[];launch();
+}
+function doJoinGroup(){
+  const gn=document.getElementById('grpJGroup').value.trim();
+  const mn=document.getElementById('grpJName').value.trim();
+  if(!gn||!mn){alert('Enter group name and your name');return;}
+  const g=loadG(gn);if(!g){alert('Group "'+gn+'" not found. Ask admin to create it first.');return;}
+  if(!g.members.includes(mn)){alert('Name "'+mn+'" not in group. Ask admin to add you.');return;}
+  S={user:mn,mode:'group',groupName:gn,chapters:{},tasks:[],studyLog:{},streak:0,lastStudyDate:null,timerLog:[],resources:[],videos:[],answerSheets:[],theme:'light'};
+  loadU(mn);S.user=mn;S.mode='group';S.groupName=gn;saveU();launch();
+}
+function doLogout(){
+  if(tmRun)tmStop();saveU();
+  S={user:null,mode:'individual',groupName:null,chapters:{},tasks:[],studyLog:{},streak:0,lastStudyDate:null,timerLog:[],resources:[],videos:[],answerSheets:[],theme:'light'};
+  sessionStorage.removeItem('caf_sess');
+  document.getElementById('appRoot').style.display='none';
+  document.getElementById('loginPage').style.display='flex';
+  ['indivName','grpCName','grpCAdmin','grpJGroup','grpJName'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  pendM=[];renderPendM();
+}
+
+// LAUNCH
+function launch(){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('appRoot').style.display='flex';
+  initApp();
+}
+function initApp(){
+  document.documentElement.setAttribute('data-theme',S.theme||'light');
+  updateTIcon();
+  const n=S.user||'Student';
+  document.getElementById('sbAvatar').textContent=n[0].toUpperCase();
+  document.getElementById('sbName').textContent=n;
+  document.getElementById('sbRole').textContent=S.mode==='group'?'👥 '+S.groupName:'CA Final Student';
+  const isGrp=S.mode==='group';
+  document.querySelectorAll('.grponly').forEach(el=>el.style.display=isGrp?'flex':'none');
+  if(isGrp){document.getElementById('grpBadgeN').textContent=S.groupName;document.getElementById('grpNameLbl').textContent=S.groupName;}
+  // Init chapters
+  Object.keys(SUBJ).forEach(s=>{SUBJ[s].chapters.forEach((_,i)=>{const k=s+'_'+i;if(!S.chapters[k])S.chapters[k]={status:'not',r1:false,r2:false,r3:false};});});
+  popSelects();updChSel('taskSubj','taskCh');updateTmCh();
+  renderDash();renderPlanner();renderSubj();renderTimerLog();renderRes();renderVids();renderAns();
+  if(isGrp)renderGrpAll();
+  updateStreak();renderCdown();
+  setActivePage('dashboard');
+  sessionStorage.setItem('caf_sess',JSON.stringify({user:S.user,mode:S.mode,groupName:S.groupName}));
+}
+function popSelects(){
+  ['qSubj','taskSubj','tmSubj','resSubj','vidSubj','ansSubj','gResSubj','gVidSubj','rFiltSubj','vFiltSubj','aFiltSubj'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const isFilt=id.includes('Filt');
+    el.innerHTML=isFilt?'<option value="">All Subjects</option>':'';
+    Object.keys(SUBJ).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=SUBJ[k].short+' – '+SUBJ[k].name;el.appendChild(o);});
+  });
+}
+function updChSel(sId,cId){
+  const sk=document.getElementById(sId)?.value;
+  const ce=document.getElementById(cId);if(!ce)return;
+  ce.innerHTML='<option value="">– Select Chapter –</option>';
+  if(sk&&SUBJ[sk])SUBJ[sk].chapters.forEach((ch,i)=>{const o=document.createElement('option');o.value=i;o.textContent=ch;ce.appendChild(o);});
+}
+function updateTmCh(){updChSel('tmSubj','tmCh');}
+
+// COUNTDOWN
+function renderCdown(){const d=Math.ceil((new Date('2026-05-03')-new Date())/(864e5));const el=document.getElementById('daysLeft');if(el)el.textContent=d>0?d:0;}
+
+// DASHBOARD
+function renderDash(){
+  const today=tod();const tl=S.studyLog[today]||{};const tHrs=Object.values(tl).reduce((a,b)=>a+b,0);
+  set('dToday',tHrs.toFixed(1));
+  let wk=0;for(let i=0;i<7;i++){const d=doff(-i);const l=S.studyLog[d]||{};wk+=Object.values(l).reduce((a,b)=>a+b,0);}
+  set('dWeek',wk.toFixed(1));
+  let done=0,total=0;
+  Object.keys(SUBJ).forEach(s=>{SUBJ[s].chapters.forEach((_,i)=>{total++;const c=S.chapters[s+'_'+i];if(c&&c.status==='done')done++;});});
+  set('dChDone',done);set('dChTotal',total);
+  const pct=total?Math.round(done/total*100):0;set('overallPct',pct+'%');
+  set('dStreak',S.streak||0);set('streakNum',S.streak||0);
+  const w=document.getElementById('subjBars');if(!w)return;w.innerHTML='';
+  Object.keys(SUBJ).forEach(k=>{
+    const s=SUBJ[k];let sd=0;s.chapters.forEach((_,i)=>{const c=S.chapters[k+'_'+i];if(c&&c.status==='done')sd++;});
+    const sp=Math.round(sd/s.chapters.length*100);
+    w.innerHTML+=`<div class="pw"><div class="pl"><span>${s.short}</span><span>${sd}/${s.chapters.length} (${sp}%)</span></div><div class="pt"><div class="pf" style="width:${sp}%;background:${s.color}"></div></div></div>`;
+  });
+}
+function logHours(){
+  const s=document.getElementById('qSubj').value,h=parseFloat(document.getElementById('qHrs').value);
+  if(!s||isNaN(h)||h<=0){alert('Select subject and enter valid hours');return;}
+  const today=tod();if(!S.studyLog[today])S.studyLog[today]={};
+  S.studyLog[today][s]=(S.studyLog[today][s]||0)+h;
+  document.getElementById('qHrs').value='';updateStreak();saveU();renderDash();if(wkC)renderCharts();
+}
+function updateStreak(){
+  const today=tod();const tl=S.studyLog[today]||{};
+  if(Object.values(tl).some(h=>h>0)){
+    const y=doff(-1);if(S.lastStudyDate===y)S.streak=(S.streak||0)+1;else if(S.lastStudyDate!==today)S.streak=1;S.lastStudyDate=today;
+  }
+  set('streakNum',S.streak||0);set('dStreak',S.streak||0);
+}
+
+// TIMER
+function tmBegin(){
+  const sk=document.getElementById('tmSubj').value;if(!sk){alert('Select a subject');return;}
+  const ci=parseInt(document.getElementById('tmCh').value);
+  tmSubj=sk;tmCh=isNaN(ci)?-1:ci;tmSec=0;tmRun=true;tmPaused=false;
+  tmIv=setInterval(()=>{tmSec++;renderTDisp();},1000);
+  showTmBtns(true,false,false);document.getElementById('tmActiveBox').style.display='block';
+  const cn=tmCh>=0&&SUBJ[sk]?SUBJ[sk].chapters[tmCh]:'General';
+  document.getElementById('tmActiveInfo').textContent=`${SUBJ[sk]?.short||sk} › ${cn}`;
+}
+function tmPause(){clearInterval(tmIv);tmRun=false;tmPaused=true;showTmBtns(false,true,false);}
+function tmResume(){tmRun=true;tmPaused=false;tmIv=setInterval(()=>{tmSec++;renderTDisp();},1000);showTmBtns(true,false,false);}
+function tmStop(){
+  clearInterval(tmIv);tmRun=false;tmPaused=false;
+  if(tmSec>=5){
+    const h=tmSec/3600,today=tod();
+    if(!S.studyLog[today])S.studyLog[today]={};
+    S.studyLog[today][tmSubj]=(S.studyLog[today][tmSubj]||0)+h;
+    const cn=tmCh>=0&&SUBJ[tmSubj]?SUBJ[tmSubj].chapters[tmCh]:'General';
+    if(!S.timerLog)S.timerLog=[];
+    S.timerLog.unshift({id:Date.now(),subj:tmSubj,chap:cn,seconds:tmSec,date:today});
+    updateStreak();saveU();renderTimerLog();renderDash();
+  }
+  tmSec=0;renderTDisp();showTmBtns(false,false,false);document.getElementById('tmActiveBox').style.display='none';
+}
+function showTmBtns(running,paused,stopped){
+  document.getElementById('tmStart').style.display=(!running&&!paused)?'':'none';
+  document.getElementById('tmPause').style.display=running?'':'none';
+  document.getElementById('tmResume').style.display=paused?'':'none';
+  document.getElementById('tmStop').style.display=(running||paused)?'':'none';
+}
+function renderTDisp(){const h=Math.floor(tmSec/3600),m=Math.floor((tmSec%3600)/60),s=tmSec%60;const e=document.getElementById('tDisp');if(e)e.textContent=pad(h)+':'+pad(m)+':'+pad(s);}
+function renderTimerLog(){
+  const el=document.getElementById('tmLog');if(!el)return;
+  const logs=S.timerLog||[];const today=tod();
+  const tTotal=logs.filter(l=>l.date===today).reduce((a,l)=>a+l.seconds,0);
+  set('tmTotalLbl','Total: '+(tTotal/3600).toFixed(1)+'h today');
+  if(!logs.length){el.innerHTML='<div class="est"><i class="fas fa-clock"></i><p>No sessions logged yet.</p></div>';return;}
+  el.innerHTML=logs.slice(0,20).map(l=>`<div class="tli"><div class="tli-info"><div class="tli-name"><span class="sbadge ${SUBJ[l.subj]?.bc||''}">${SUBJ[l.subj]?.short||l.subj}</span> ${l.chap}</div><div class="tli-meta">${l.date===today?'Today':l.date}</div></div><div class="tli-t">${fmtSec(l.seconds)}</div><button class="tli-d" onclick="delTL(${l.id})"><i class="fas fa-trash"></i></button></div>`).join('');
+}
+function delTL(id){S.timerLog=(S.timerLog||[]).filter(l=>l.id!==id);saveU();renderTimerLog();}
+function fmtSec(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;return h?h+'h '+pad(m)+'m':pad(m)+'m '+pad(sc)+'s';}
+function pad(n){return String(n).padStart(2,'0');}
+
+// PLANNER
+function renderPlanner(){
+  const el=document.getElementById('taskList');if(!el)return;
+  const ts=S.tasks||[];if(!ts.length){el.innerHTML='<div class="est"><i class="fas fa-clipboard-list"></i><p>No tasks yet.</p></div>';set('taskLbl','0 / 0 done');return;}
+  const done=ts.filter(t=>t.done).length;set('taskLbl',done+' / '+ts.length+' done');
+  el.innerHTML=ts.map((t,i)=>`<div class="ti ${t.done?'done':''}"><input type="checkbox" class="ccb" ${t.done?'checked':''} onchange="togTask(${i})" /><div style="flex:1"><div class="tt">${t.desc}</div><div style="margin-top:3px;display:flex;gap:6px;flex-wrap:wrap"><span class="sbadge ${SUBJ[t.subj]?.bc||''}">${SUBJ[t.subj]?.short||t.subj}</span>${t.ci!==undefined&&SUBJ[t.subj]?'<span style="font-size:11px;color:var(--text2)">'+SUBJ[t.subj].chapters[t.ci]+'</span>':''}</div></div><button class="tdel" onclick="delTask(${i})"><i class="fas fa-times"></i></button></div>`).join('');
+}
+function addTask(){
+  const d=document.getElementById('taskDesc').value.trim(),s=document.getElementById('taskSubj').value,ci=document.getElementById('taskCh').value;
+  if(!d||!s){alert('Fill task and subject');return;}
+  S.tasks.push({desc:d,subj:s,ci:ci!==''?parseInt(ci):undefined,done:false,date:tod()});
+  document.getElementById('taskDesc').value='';saveU();renderPlanner();
+}
+function togTask(i){S.tasks[i].done=!S.tasks[i].done;saveU();renderPlanner();}
+function delTask(i){S.tasks.splice(i,1);saveU();renderPlanner();}
+
+// SUBJECTS
+function renderSubj(){
+  const w=document.getElementById('subjAcc');if(!w)return;w.innerHTML='';
+  Object.keys(SUBJ).forEach(k=>{
+    const s=SUBJ[k];let done=0;s.chapters.forEach((_,i)=>{const c=S.chapters[k+'_'+i];if(c&&c.status==='done')done++;});
+    const pct=Math.round(done/s.chapters.length*100);
+    const d=document.createElement('div');d.className='sacc';
+    d.innerHTML=`<div class="sh" onclick="togAcc('${k}')"><span class="sbadge ${s.bc}">${s.short}</span><span class="stitle">${s.name}</span><span class="spct">${done}/${s.chapters.length} · ${pct}%</span><i class="fas fa-chevron-down schev"></i></div><div class="sbody" id="acc-${k}"><div class="pw" style="margin-bottom:14px"><div class="pt"><div class="pf" style="width:${pct}%;background:${s.color}"></div></div></div>${s.chapters.map((ch,i)=>mkChItem(k,i,ch)).join('')}</div>`;
+    w.appendChild(d);
+  });
+}
+function mkChItem(sk,idx,chName){
+  const k=sk+'_'+idx;const st=S.chapters[k]||{status:'not',r1:false,r2:false,r3:false};
+  const sc={not:'snot',in:'sin',done:'sdone'};
+  return `<div class="chi"><input type="checkbox" class="ccb" ${st.status==='done'?'checked':''} onchange="togCh('${k}')" /><span class="cname">${chName}</span><div class="rg"><button class="rb r1 ${st.r1?'on':''}" title="R1 – Push yourself" onclick="togRev('${k}','r1',this)">R1</button><button class="rb r2 ${st.r2?'on':''}" title="R2 – Good" onclick="togRev('${k}','r2',this)">R2</button><button class="rb r3 ${st.r3?'on':''}" title="R3 – Excellent" onclick="togRev('${k}','r3',this)">R3</button></div><select class="cst ${sc[st.status]}" onchange="setChSt('${k}',this.value,this)"><option value="not" ${st.status==='not'?'selected':''}>Not Started</option><option value="in" ${st.status==='in'?'selected':''}>In Progress</option><option value="done" ${st.status==='done'?'selected':''}>Completed</option></select></div>`;
+}
+function togAcc(k){const b=document.getElementById('acc-'+k);const h=b.previousElementSibling;b.classList.toggle('open');h.classList.toggle('open');}
+function togCh(k){const c=S.chapters[k];c.status=c.status==='done'?'in':'done';saveU();renderSubj();renderDash();}
+function setChSt(k,v,sel){S.chapters[k].status=v;sel.className='cst '+{not:'snot',in:'sin',done:'sdone'}[v];saveU();renderDash();}
+function togRev(k,r,btn){S.chapters[k][r]=!S.chapters[k][r];btn.classList.toggle('on',S.chapters[k][r]);saveU();}
+
+// CHARTS
+function renderCharts(){renderWkChart();renderSjChart();renderBrChart();}
+function renderWkChart(){
+  const labels=[],data=[];for(let i=6;i>=0;i--){const d=doff(-i);const l=S.studyLog[d]||{};labels.push(new Date(d+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short'}));data.push(parseFloat(Object.values(l).reduce((a,b)=>a+b,0).toFixed(1)));}
+  const ctx=document.getElementById('wkChart')?.getContext('2d');if(!ctx)return;if(wkC)wkC.destroy();
+  wkC=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Hours',data,backgroundColor:'#c84b31',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:'#888'}},x:{grid:{display:false},ticks:{color:'#888'}}}}});
+}
+function renderSjChart(){
+  const la=[],da=[],co=[];Object.keys(SUBJ).forEach(k=>{const s=SUBJ[k];let done=0;s.chapters.forEach((_,i)=>{const c=S.chapters[k+'_'+i];if(c&&c.status==='done')done++;});la.push(s.short);da.push(Math.round(done/s.chapters.length*100));co.push(s.color);});
+  const ctx=document.getElementById('subjChart')?.getContext('2d');if(!ctx)return;if(sjC)sjC.destroy();
+  sjC=new Chart(ctx,{type:'doughnut',data:{labels:la,datasets:[{data:da,backgroundColor:co,borderWidth:2,borderColor:'var(--card)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},color:'#888',padding:10}},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw}%`}}}}});
+}
+function renderBrChart(){
+  const ctx=document.getElementById('barChart')?.getContext('2d');if(!ctx)return;if(brC)brC.destroy();
+  const la=Object.values(SUBJ).map(s=>s.short),dd=[],td=[];
+  Object.keys(SUBJ).forEach(k=>{let done=0;SUBJ[k].chapters.forEach((_,i)=>{const c=S.chapters[k+'_'+i];if(c&&c.status==='done')done++;});dd.push(done);td.push(SUBJ[k].chapters.length-done);});
+  brC=new Chart(ctx,{type:'bar',data:{labels:la,datasets:[{label:'Completed',data:dd,backgroundColor:'#2d6a4f',borderRadius:4},{label:'Remaining',data:td,backgroundColor:'rgba(128,128,128,0.2)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#888'}}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#888'}},y:{stacked:true,grid:{color:'rgba(128,128,128,0.1)'},ticks:{color:'#888'}}}}});
+}
+
+// RESOURCES
+function togResF(){const t=document.getElementById('resType').value;document.getElementById('resFileW').style.display=t==='link'?'none':'block';document.getElementById('resLinkW').style.display=t==='link'?'block':'none';}
+function togGResF(){const t=document.getElementById('gResType').value;document.getElementById('gResFileW').style.display=t==='link'?'none':'block';document.getElementById('gResLinkW').style.display=t==='link'?'block':'none';}
+function addRes(){
+  const type=document.getElementById('resType').value,title=document.getElementById('resTitle').value.trim(),subj=document.getElementById('resSubj').value;
+  if(!title||!subj){alert('Fill title and subject');return;}
+  const r={id:Date.now(),type,title,subj,addedBy:S.user};
+  if(type==='link'){r.url=document.getElementById('resLink').value.trim();if(!S.resources)S.resources=[];S.resources.push(r);document.getElementById('resTitle').value='';saveU();renderRes();}
+  else{const f=document.getElementById('resFile').files[0];if(!f){alert('Select a file');return;}const rd=new FileReader();rd.onload=e=>{r.data=e.target.result;r.fileName=f.name;if(!S.resources)S.resources=[];S.resources.push(r);saveU();renderRes();};rd.readAsDataURL(f);document.getElementById('resTitle').value='';}
+}
+function renderRes(){
+  const flt=document.getElementById('rFiltSubj')?.value;const list=(S.resources||[]).filter(r=>!flt||r.subj===flt);
+  const el=document.getElementById('resList');if(!el)return;
+  el.innerHTML=list.length?list.map(r=>resHTML(r,'delRes',false)).join(''):'<div class="est"><i class="fas fa-folder-open"></i><p>No resources found.</p></div>';
+}
+function resHTML(r,dfn,showUp){
+  const ic=r.type==='pdf'?'📄':r.type==='image'?'🖼️':'🔗';
+  const ob=r.url?`<a href="${r.url}" target="_blank" class="btn bs bsm">Open</a>`:r.data?`<a href="${r.data}" download="${r.fileName||'file'}" class="btn bs bsm">Download</a>`:'';
+  const up=showUp&&r.addedBy?`<div style="font-size:11px;color:var(--accent);font-weight:600;margin-top:2px">by ${r.addedBy}</div>`:'';
+  const db=dfn?`<button class="btn bs bsm" onclick="${dfn}(${r.id})"><i class="fas fa-trash"></i></button>`:'';
+  return `<div class="ri"><div class="ricon">${ic}</div><div class="rinfo"><div class="rname">${r.title}</div><div class="rmeta"><span class="sbadge ${SUBJ[r.subj]?.bc||''}">${SUBJ[r.subj]?.short||r.subj}</span></div>${up}</div><div style="display:flex;gap:6px">${ob}${db}</div></div>`;
+}
+function delRes(id){S.resources=(S.resources||[]).filter(r=>r.id!==id);saveU();renderRes();}
+
+// VIDEOS
+function addVid(){
+  const url=document.getElementById('vidUrl').value.trim(),title=document.getElementById('vidTitle').value.trim(),subj=document.getElementById('vidSubj').value;
+  if(!url||!title||!subj){alert('Fill all fields');return;}
+  if(!S.videos)S.videos=[];S.videos.push({id:Date.now(),url,title,subj,addedBy:S.user});
+  document.getElementById('vidUrl').value='';document.getElementById('vidTitle').value='';saveU();renderVids();
+}
+function renderVids(){
+  const flt=document.getElementById('vFiltSubj')?.value;const list=(S.videos||[]).filter(v=>!flt||v.subj===flt);
+  const el=document.getElementById('vidList');if(!el)return;
+  el.innerHTML=list.length?list.map(v=>vidHTML(v,'delVid',false)).join(''):'<div class="est"><i class="fas fa-video"></i><p>No videos found.</p></div>';
+}
+function vidHTML(v,dfn,showUp){
+  const ytId=v.url.match(/(?:v=|\/embed\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1];
+  const th=ytId?`<img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" style="width:80px;height:50px;object-fit:cover;border-radius:6px;flex-shrink:0" onerror="this.style.display='none'" />`:'<div class="ricon">🎬</div>';
+  const up=showUp&&v.addedBy?`<div style="font-size:11px;color:var(--accent);font-weight:600;margin-top:2px">by ${v.addedBy}</div>`:'';
+  const db=dfn?`<button class="btn bs bsm" onclick="${dfn}(${v.id})"><i class="fas fa-trash"></i></button>`:'';
+  return `<div class="ri" style="align-items:flex-start">${th}<div class="rinfo"><div class="rname">${v.title}</div><div class="rmeta"><span class="sbadge ${SUBJ[v.subj]?.bc||''}">${SUBJ[v.subj]?.short||v.subj}</span></div>${up}</div><div style="display:flex;gap:6px"><a href="${v.url}" target="_blank" class="btn bs bsm"><i class="fab fa-youtube"></i> Watch</a>${db}</div></div>`;
+}
+function delVid(id){S.videos=(S.videos||[]).filter(v=>v.id!==id);saveU();renderVids();}
+
+// ANSWER SHEETS
+function addAns(){
+  const title=document.getElementById('ansTitle').value.trim(),subj=document.getElementById('ansSubj').value,f=document.getElementById('ansFile').files[0];
+  if(!title||!subj||!f){alert('Fill all fields and select a file');return;}
+  const rd=new FileReader();rd.onload=e=>{
+    const sh={id:Date.now(),title,subj,fileName:f.name,fileType:f.type,data:e.target.result,addedBy:S.user,date:tod()};
+    if(!S.answerSheets)S.answerSheets=[];S.answerSheets.push(sh);
+    if(S.mode==='group'&&S.groupName){const g=getG(S.groupName);if(!g.answerSheets)g.answerSheets=[];g.answerSheets.push(sh);saveG(g);renderGAns();}
+    document.getElementById('ansTitle').value='';saveU();renderAns();
+  };rd.readAsDataURL(f);
+}
+function renderAns(){
+  const flt=document.getElementById('aFiltSubj')?.value;const list=(S.answerSheets||[]).filter(a=>!flt||a.subj===flt);
+  const el=document.getElementById('ansList');if(!el)return;
+  el.innerHTML=list.length?list.map(a=>ansHTML(a,'delAns')).join(''):'<div class="est"><i class="fas fa-file-alt"></i><p>No answer sheets yet.</p></div>';
+}
+function ansHTML(a,dfn){
+  const isImg=a.fileType&&a.fileType.startsWith('image');
+  const ic=isImg?`<img src="${a.data}" class="ath" />`:'<div class="atpdf"><i class="fas fa-file-pdf"></i></div>';
+  const db=dfn?`<button class="btn bs bsm" onclick="${dfn}(${a.id})"><i class="fas fa-trash"></i></button>`:'';
+  return `<div class="ai">${ic}<div class="ainfo"><div class="aname">${a.title}</div><div class="ameta"><span class="sbadge ${SUBJ[a.subj]?.bc||''}">${SUBJ[a.subj]?.short||a.subj}</span> · ${a.fileName}</div><div class="aup">by ${a.addedBy||'You'} · ${a.date||''}</div></div><div style="display:flex;gap:6px"><a href="${a.data}" download="${a.fileName}" class="btn bs bsm">Download</a>${db}</div></div>`;
+}
+function delAns(id){S.answerSheets=(S.answerSheets||[]).filter(a=>a.id!==id);saveU();renderAns();}
+
+// GROUP
+function renderGrpAll(){renderGProg();renderGRes();renderGVid();renderGAns();}
+function renderGProg(){
+  const el=document.getElementById('grpMemList');if(!el)return;
+  const g=getG(S.groupName);const mems=g.members||[];
+  if(!mems.length){el.innerHTML='<div class="est"><i class="fas fa-users"></i><p>No members.</p></div>';return;}
+  const data=mems.map((name,i)=>{
+    let pct=0,hrs=0,streak=0;
+    const r=localStorage.getItem('caf_u_'+name);
+    if(r){try{const ms=JSON.parse(r);pct=calcPct(ms);hrs=calcTodayH(ms);streak=ms.streak||0;}catch(e){}}
+    return{name,pct,hrs,streak,color:MCOLS[i%MCOLS.length],isMe:name===S.user};
+  }).sort((a,b)=>b.pct-a.pct);
+  el.innerHTML=`<p style="font-size:12px;color:var(--text2);margin-bottom:12px;background:var(--bg2);padding:8px 12px;border-radius:8px"><i class="fas fa-info-circle"></i> Progress updates in real-time when members are active on the same device/browser. Data syncs via localStorage.</p>`+
+  data.map((m,r)=>`<div class="gm"><div class="mav" style="background:${m.color}">${m.name[0].toUpperCase()}</div><div class="minfo"><div class="mname">${m.name}${m.isMe?' <span style="font-size:10px;background:var(--accent);color:#fff;padding:1px 7px;border-radius:10px;margin-left:4px">You</span>':''}</div><div class="mstat">${m.hrs.toFixed(1)}h today · 🔥${m.streak}d streak · Rank #${r+1}</div><div class="pw" style="margin:6px 0 0"><div class="pt"><div class="pf" style="width:${m.pct}%;background:${m.color}"></div></div></div></div><div class="mpct" style="color:${m.color}">${m.pct}%</div></div>`).join('');
+}
+function calcPct(ms){let d=0,t=0;if(!ms?.chapters)return 0;Object.keys(SUBJ).forEach(s=>{SUBJ[s].chapters.forEach((_,i)=>{t++;const c=ms.chapters[s+'_'+i];if(c&&c.status==='done')d++;});});return t?Math.round(d/t*100):0;}
+function calcTodayH(ms){if(!ms?.studyLog)return 0;const l=ms.studyLog[tod()]||{};return Object.values(l).reduce((a,b)=>a+b,0);}
+function addGRes(){
+  const type=document.getElementById('gResType').value,title=document.getElementById('gResTitle').value.trim(),subj=document.getElementById('gResSubj').value;
+  if(!title||!subj){alert('Fill title and subject');return;}
+  const r={id:Date.now(),type,title,subj,addedBy:S.user,date:tod()};
+  if(type==='link'){r.url=document.getElementById('gResLink').value.trim();const g=getG(S.groupName);if(!g.resources)g.resources=[];g.resources.push(r);saveG(g);document.getElementById('gResTitle').value='';renderGRes();}
+  else{const f=document.getElementById('gResFile').files[0];if(!f){alert('Select a file');return;}const rd=new FileReader();rd.onload=e=>{r.data=e.target.result;r.fileName=f.name;const g=getG(S.groupName);if(!g.resources)g.resources=[];g.resources.push(r);saveG(g);document.getElementById('gResTitle').value='';renderGRes();};rd.readAsDataURL(f);}
+}
+function renderGRes(){const el=document.getElementById('gResList');if(!el)return;const g=getG(S.groupName);const l=g.resources||[];el.innerHTML=l.length?l.map(r=>resHTML(r,'delGRes',true)).join(''):'<div class="est"><i class="fas fa-folder-open"></i><p>No shared resources yet.</p></div>';}
+function delGRes(id){const g=getG(S.groupName);g.resources=(g.resources||[]).filter(r=>r.id!==id);saveG(g);renderGRes();}
+function addGVid(){
+  const url=document.getElementById('gVidUrl').value.trim(),title=document.getElementById('gVidTitle').value.trim(),subj=document.getElementById('gVidSubj').value;
+  if(!url||!title||!subj){alert('Fill all fields');return;}
+  const g=getG(S.groupName);if(!g.videos)g.videos=[];g.videos.push({id:Date.now(),url,title,subj,addedBy:S.user});saveG(g);
+  document.getElementById('gVidUrl').value='';document.getElementById('gVidTitle').value='';renderGVid();
+}
+function renderGVid(){const el=document.getElementById('gVidList');if(!el)return;const g=getG(S.groupName);const l=g.videos||[];el.innerHTML=l.length?l.map(v=>vidHTML(v,'delGVid',true)).join(''):'<div class="est"><i class="fas fa-video"></i><p>No shared videos yet.</p></div>';}
+function delGVid(id){const g=getG(S.groupName);g.videos=(g.videos||[]).filter(v=>v.id!==id);saveG(g);renderGVid();}
+function renderGAns(){const el=document.getElementById('gAnsList');if(!el)return;const g=getG(S.groupName);const l=g.answerSheets||[];el.innerHTML=l.length?l.map(a=>ansHTML(a,null)).join(''):'<div class="est"><i class="fas fa-file-alt"></i><p>No answer sheets shared yet.</p></div>';}
+
+// NAV
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  if(el)el.classList.add('active');
+  const titles={dashboard:'Dashboard',timer:'Study Timer',planner:'Daily Planner',subjects:'Subjects',charts:'Analytics',resources:'Resources',videos:'Video Lectures',answers:'Answer Sheets',group:'Group Progress'};
+  set('topTitle',titles[id]||id);
+  if(id==='charts')renderCharts();
+  if(id==='group'){renderGrpAll();}
+  closeSB();
+}
+function setActivePage(id){const n=document.querySelector(`.nav-item[onclick*="'${id}'"]`);showPage(id,n);}
+function swTab(prefix,id,el){
+  const pageId={res:'resources',vid:'videos',ans:'answers',grp:'group'}[prefix]||'planner';
+  const page=document.getElementById('page-'+pageId);if(!page)return;
+  page.querySelectorAll('.tab-c').forEach(t=>t.classList.remove('active'));
+  page.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(prefix+'-'+id)?.classList.add('active');el.classList.add('active');
+}
+
+// THEME
+function toggleTheme(){const next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);S.theme=next;saveU();updateTIcon();if(wkC)setTimeout(renderCharts,100);}
+function updateTIcon(){const e=document.getElementById('themeIcon');if(e)e.className=S.theme==='dark'?'fas fa-sun':'fas fa-moon';}
+
+// MENUS
+function toggleDD(id){document.querySelectorAll('.dots-dd').forEach(d=>{if(d.id!==id)d.classList.remove('open');});document.getElementById(id)?.classList.toggle('open');}
+function closeDD(){document.querySelectorAll('.dots-dd').forEach(d=>d.classList.remove('open'));}
+document.addEventListener('click',e=>{if(!e.target.closest('.dots-wrap'))closeDD();});
+
+// RESET
+function confirmReset(){document.getElementById('resetMod').classList.add('open');}
+function closeMod(id){document.getElementById(id).classList.remove('open');}
+function doReset(){const{user,mode,groupName,theme}=S;S={user,mode,groupName,chapters:{},tasks:[],studyLog:{},streak:0,lastStudyDate:null,timerLog:[],resources:[],videos:[],answerSheets:[],theme};saveU();closeMod('resetMod');initApp();}
+function exportData(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='cafinal_'+S.user+'_'+tod()+'.json';a.click();}
+function shareWA(e){if(e)e.preventDefault();const u=encodeURIComponent(location.href);const t=encodeURIComponent("🎓 CA Final May 2026 – Study Tracker! Track progress, group study & more 📚");window.open('https://wa.me/?text='+t+'%20'+u,'_blank');}
+
+// SIDEBAR
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open');}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open');}
+
+// UTILS
+function tod(){return new Date().toISOString().split('T')[0];}
+function doff(d){const dt=new Date();dt.setDate(dt.getDate()+d);return dt.toISOString().split('T')[0];}
+function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+
+// BOOT
+window.addEventListener('DOMContentLoaded',()=>{
+  const sess=sessionStorage.getItem('caf_sess');
+  if(sess){try{const{user,mode,groupName}=JSON.parse(sess);S.user=user;S.mode=mode;S.groupName=groupName;loadU(user);S.user=user;S.mode=mode;S.groupName=groupName;document.getElementById('loginPage').style.display='none';document.getElementById('appRoot').style.display='flex';initApp();return;}catch(e){}}
+  document.getElementById('loginPage').style.display='flex';document.getElementById('appRoot').style.display='none';
+  setInterval(renderCdown,60000);
+  setInterval(()=>{if(S.mode==='group'&&document.getElementById('page-group')?.classList.contains('active'))renderGProg();},30000);
+});
+window.addEventListener('beforeunload',()=>{if(S.user)sessionStorage.setItem('caf_sess',JSON.stringify({user:S.user,mode:S.mode,groupName:S.groupName}));});
+</script>
+</body>
+</html>
